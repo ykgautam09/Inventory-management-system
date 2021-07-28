@@ -19,6 +19,7 @@
     "mysql2": "^2.2.5"
   },
   "devDependencies": {
+    "ejs-lint": "^1.2.1",
     "nodemon": "^2.0.12"
   }
 }
