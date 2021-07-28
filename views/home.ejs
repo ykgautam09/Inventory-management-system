@@ -21,36 +21,28 @@
                     <table id="mytable" class="table table-bordred table-striped">
 
                         <thead>
-
-                            <th><input type="checkbox" id="checkall" /></th>
                             <th>Book Name</th>
                             <th>Author Name</th>
-                            <th>Category</th>
                             <th>Description</th>
+                            <th>Category</th>
                             <th>Price</th>
                             <th>Quantity</th>
                             <th>Edit</th>
-
                             <th>Delete</th>
                         </thead>
+
                         <tbody>
                             <% if (bookData){ %>
                                 <% for(i=0;i<bookData.length;i++){ %>
                                     <tr>
-
-
-                                            <td>
-                                                <%= bookData[i].id %>
-                                            </td>
-
                                             <td>
                                                 <%= bookData[i].name %>
                                             </td>
                                             <td>
-                                                <%= bookData[i].description %>
+                                                <%= bookData[i].author %>
                                             </td>
                                             <td>
-                                                <%= bookData[i].author %>
+                                                <%= bookData[i].description %>
                                             </td>
                                             <td>
                                                 <%= bookData[i].category %>
@@ -61,19 +53,13 @@
                                             <td>
                                                 <%= bookData[i].quantity %>
                                             </td>
-
-
                                                 <td>
-                                                    <p data-placement="top" data-toggle="tooltip" title="Edit"><button
-                                                            class="btn btn-primary btn-xs" data-title="Edit"
-                                                            data-toggle="modal" data-target="#edit"><span
-                                                                class="glyphicon glyphicon-pencil"></span></button></p>
+                                                    <button onclick="editQuantity(this,<%- i %>)" class="btn btn-primary btn-xs"><span 
+                                                                class="glyphicon glyphicon-pencil"></span></button>
                                                 </td>
                                                 <td>
-                                                    <p data-placement="top" data-toggle="tooltip" title="Delete"><button
-                                                            class="btn btn-danger btn-xs" data-title="Delete"
-                                                            data-toggle="modal" data-target="#delete"><span
-                                                                class="glyphicon glyphicon-trash"></span></button></p>
+                                                    <button  onclick="removeEntry(this,<%- i %>)" class="btn btn-danger btn-xs" ><span
+                                                                class="glyphicon glyphicon-trash"></span></button>
                                                 </td>
                                     </tr>
 
@@ -83,24 +69,25 @@
                         </tbody>
 
                     </table>
-
-                    <div class="clearfix"></div>
-                    <ul class="pagination pull-right">
-                        <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-                        <li class="active"><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li><a href="#">4</a></li>
-                        <li><a href="#">5</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
-                    </ul>
-
                 </div>
 
             </div>
         </div>
     </div>
     <script src="/public/js/home.js"></script>
+    <script>
+        function removeEntry(e,entry){
+            $.ajax({
+                url:'/delete',
+                method:'POST',
+                data:JSON.stringify({id:entry}),
+                contentType: 'application/json',
+                success:(response)=>{
+                    console.log(response);
+                }
+            })
+        }
+    </script>
 </body>
 
 </html>
