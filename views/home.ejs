@@ -2,91 +2,164 @@
 <html lang="en">
 
 <head>
-
     <%- include('_header'); %>
     <link rel="stylesheet" href="/public/css/home.css">
-
 </head>
 
 <body>
     <div class="container">
-        <div class="row">
+        <div class="col-md-8 px-5 mx-5">
+            <form>
+                <div class="row">
+                    <label for="category">Category</label>
+                    <input id="cFilter" name="cFilter" type="checkbox">
 
-
-            <div class="col-md-12">
-                <h4>Books in Inventory</h4>
-                <div class="table-responsive">
-
-
-                    <table id="mytable" class="table table-bordred table-striped">
-
-                        <thead>
-                            <th>Book Name</th>
-                            <th>Author Name</th>
-                            <th>Description</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Quantity</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
-                        </thead>
-
-                        <tbody>
-                            <% if (bookData){ %>
-                                <% for(i=0;i<bookData.length;i++){ %>
-                                    <tr>
-                                            <td>
-                                                <%= bookData[i].name %>
-                                            </td>
-                                            <td>
-                                                <%= bookData[i].author %>
-                                            </td>
-                                            <td>
-                                                <%= bookData[i].description %>
-                                            </td>
-                                            <td>
-                                                <%= bookData[i].category %>
-                                            </td>
-                                            <td>
-                                                <%= bookData[i].price %>
-                                            </td>
-                                            <td>
-                                                <%= bookData[i].quantity %>
-                                            </td>
-                                                <td>
-                                                    <button onclick="editQuantity(this,<%- i %>)" class="btn btn-primary btn-xs"><span 
-                                                                class="glyphicon glyphicon-pencil"></span></button>
-                                                </td>
-                                                <td>
-                                                    <button  onclick="removeEntry(this,<%- i %>)" class="btn btn-danger btn-xs" ><span
-                                                                class="glyphicon glyphicon-trash"></span></button>
-                                                </td>
-                                    </tr>
-
-                                    <% } %>
-
-                                <% } %>
-                        </tbody>
-
-                    </table>
+                    <select name="category" id="category">
+                        <% for( i=0;i< category.length;i++) { %>
+                            <option value="<%- category[i].category %>">
+                                <%- category[i].category %>
+                            </option>
+                        <% } %>
+                    </select>
                 </div>
 
+                <div class="row">
+                    <label for="author">Author</label>
+                    <input id="aFilter" name="aFilter" type="checkbox">
+
+                    <select name="author" id="author">
+                        <% for( i=0;i< author.length;i++) { %>
+                            <option value="<%- author[i].author %>">
+                                <%- author[i].author %>
+                            </option>
+                        <% } %>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="return getData(this)">Submit</button>
+            </form>
+            <script>
+                function getData(e) {
+                    var cFilter = $('#cFilter').prop('checked');
+                    var aFilter = $('#aFilter').prop('checked');
+                    var filter, filterData;
+                    if (cFilter == true) {
+                        filter = 'category';
+                        filterData = $('#category').val();
+                    }
+                    else {
+                        filter = 'author';
+                        filterData = $('#author').val();
+                    }
+
+                    $.ajax({
+                        url: '/',
+                        method: 'POST',
+                        data: JSON.stringify({ filter, filterData }),
+                        contentType: 'application/json',
+                        success: (response) => {
+                            // document.clear();
+                            // document.write(response)
+                            $("html").empty();
+                            $("html").append(response);
+                        }
+                    })
+                    return false;
+                }
+            </script>
+        </div>
+
+    </div>
+    <% if (bookData){ %>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>Books in Inventory</h4>
+                    <div class="table-responsive">
+                        <table id="mytable" class="table table-bordred table-striped">
+
+                            <thead>
+                                <th>Book Name</th>
+                                <th>Author Name</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
+                            </thead>
+
+                            <tbody>
+                                <% for(i=0;i<bookData.length;i++){ %>
+                                    <tr>
+                                        <td>
+                                            <%= bookData[i].name %>
+                                        </td>
+                                        <td>
+                                            <%= bookData[i].author %>
+                                        </td>
+                                        <td>
+                                            <%= bookData[i].description %>
+                                        </td>
+                                        <td>
+                                            <%= bookData[i].category %>
+                                        </td>
+                                        <td>
+                                            <%= bookData[i].price %>
+                                        </td>
+                                        <td>
+                                            <%= bookData[i].quantity %>
+                                        </td>
+                                        <td>
+                                            <button onclick="editQuantity(this,'<%- bookData[i].id %>')"
+                                                class="btn btn-primary btn-xs"><span
+                                                    class="glyphicon glyphicon-pencil"></span></button>
+                                        </td>
+                                        <td>
+                                            <button onclick="removeEntry(this,'<%- bookData[i].id %>')"
+                                                class="btn btn-danger btn-xs"><span
+                                                    class="glyphicon glyphicon-trash"></span></button>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    <% } %>
     <script src="/public/js/home.js"></script>
     <script>
-        function removeEntry(e,entry){
+        function removeEntry(e, entry) {
             $.ajax({
-                url:'/delete',
-                method:'POST',
-                data:JSON.stringify({id:entry}),
+                url: '/delete',
+                method: 'POST',
+                data: JSON.stringify({ id: entry }),
                 contentType: 'application/json',
-                success:(response)=>{
+                success: (response) => {
                     console.log(response);
+                    location.reload();  // reload page to reflect changes
                 }
             })
+            return false;
         }
+
+        function editQuantity(e, entry) {
+            let quantity = prompt("enter quantity in inventory")
+            $.ajax({
+                url: '/edit-quantity',
+                method: 'POST',
+                data: JSON.stringify({ id: entry, quantity }),
+                contentType: 'application/json',
+                success: (response) => {
+                    console.log(response);
+                    location.reload()  // reload page to reflect changes
+                }
+            })
+            return false;
+        }
+
     </script>
 </body>
 
