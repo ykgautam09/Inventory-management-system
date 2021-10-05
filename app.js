@@ -28,7 +28,7 @@ app.use('/', indexRoute);
 // Server Set-up
 app.listen(process.env.SERVER_PORT || '5000', (err) => {
     if (err) console.log(err)
-    console.log('Server Up and Running at localhost:5000/');
+    console.log(`Server Up and Running at localhost:${process.env.SERVER_PORT}/`);
 })
 
 module.exports = app;
